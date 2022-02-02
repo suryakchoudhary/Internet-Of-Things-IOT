@@ -27,14 +27,18 @@ void loop() {
   {
     digitalWrite(TEMP_RED, 1);
     digitalWrite(NO_DATA_WHITE, 0);
-    Serial.println("Read_Temp\n");
+    Serial.println("Read_Temp: ");
+    Serial.print(var_t);
+    Serial.println("\n");
     delay(1000);
   }
   else if(var_h > 1)
   {
     digitalWrite(HUM_GREEN, 1);
     digitalWrite(NO_DATA_WHITE, 0);
-    Serial.println("READ_HUMIDITY\n");
+    Serial.println("READ_HUMIDITY ");
+    Serial.print(var_h);
+    Serial.println("\n");
     delay(1000);
   }
   else
@@ -43,7 +47,7 @@ void loop() {
     digitalWrite(TEMP_RED, 0);
     digitalWrite(HUM_GREEN, 0);
     Serial.println("READ_Nothing\n");
-    delay(1000);
+    //delay(1000);
   }
 
 }

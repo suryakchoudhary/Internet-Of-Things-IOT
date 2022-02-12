@@ -5,7 +5,7 @@
 
 ThingESP32 thing("suryakant", "SmartBin", "ESP32cp-2102");
 
-RTC_DATA_ATTR int bootCount = 0;  // Saving data to Real Time Clock
+//RTC_DATA_ATTR int bootCount = 0;  // Saving data to Real Time Clock
 
 // ULTRASONIC
 #define TRIG 4
@@ -23,9 +23,6 @@ RTC_DATA_ATTR int bootCount = 0;  // Saving data to Real Time Clock
 #define MEDIUM 20
 //#define MAX 10
 
-// WIFI CREDENTIALS
-/*char ssid[] = "Ferrari";   // your network SSID (name) 
-char pass[] = "pawan@@0433kant";*/
 WiFiClient  client;
 
 DHT dht(DHTPIN, DHT11);
@@ -51,38 +48,25 @@ void setup()
   //WiFi.mode(WIFI_STA);
   ThingSpeak.begin(client);  // Initialize ThingSpeak
 
- /* if(WiFi.status() != WL_CONNECTED)
-  {
-    Serial.print("Attempting to connect to SSID: ");
-    Serial.println(ssid);
-  
-    while(WiFi.status() != WL_CONNECTED)
-    {
-      WiFi.begin(ssid, pass);  // Connect to WPA/WPA2 network. Change this line if using open or WEP network
-      Serial.print("Trying to connect\n");
-      delay(2500);                             //THIS IS THE MINIMUM TIME REQUIRED TO CONNECT TO WI-FI
-    } 
-  }
-  Serial.println("\nConnected.");*/
-
   thing.SetWiFi("Ferrari", "pawan@@0433kant");
   //thing.SetWiFi("iQOO", "surya00000kant12");
   Serial.println("\nConnected.");
   thing.initDevice();
 }
-
-// ThingESP: Follows MQTT protocol and acts as mediator to connect Twilio with ESP32 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+/*
+// ThingESP: Follows MQTT protocol and acts as BROKER to connect Twilio whatsapp API with ESP32 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 String HandleReaponse(String query) 
 {
-  if (query == "led on") {
-    //digitalWrite(LED, 0);
+  if (query == "led on") 
+  {
+    digitalWrite(RED, 0);
     return "Done: LED Turned ON";
   }
-  /*if(query == "HCSRO4 STATUS")
+  if(query == "HCSRO4 STATUS")
   return digitalRead(TRIG) ? "HCSR04 IS OFF" : "HCSR04 IS ON";
 
-  else return "INVALID QUERY";*/
-}
+  else return "INVALID QUERY";
+}*/
                                                                                        //00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 
 void loop() 
@@ -93,6 +77,7 @@ void loop()
   float humidity;      // Variable to store Humidity
   int status = 0;
   int per = 0;     // Displaying fill level percent
+  int i = 0;          // Used in while loop for sending alert
 
   temperature = dht.readTemperature();    //read temperature
   humidity = dht.readHumidity();          //read Humidity
@@ -104,11 +89,18 @@ void loop()
   Serial.print(temperature);
   Serial.println("");
   Serial.println("");
+
+  //CONDITION FOR SENDING HIGH TEMPREATURE ALERT
   if(temperature >= 25)
   {
-    thing.sendMsg("+919773680338", "temperature is greater than 20 degree") ;
-    //delay(3000);
-  }
+      for(i=0; i<5; i++)
+      {
+        thing.sendMsg("+919773680338", "temperature is greater than 25 degree") ;
+        delay(500);            //Minimum delay required to connect with ThingESP(500 milli seconds)
+        thing.Handle();        // Handles the connection with the hekp of ESP32
+
+      }
+    }
 
 
   // PRINTING HUMIDITY
@@ -176,8 +168,17 @@ void loop()
     Serial.print("DUSTBIN IS FULL (RED_LED): ");
     Serial.print(height);
     Serial.println("cm");
-    thing.sendMsg("+919773680338", "Dustbin Fill Level Is Greather Than 66%") ;
-    //delay(3000);
+
+    // CONDITION FOR SENDING GARBAGE FULL ALERT
+    if(height > 20)
+    {
+      for(i=0; i<5; i++)
+      {
+        thing.sendMsg("+919773680338", "Dustbin Fill Level Is Greather Than 66%") ;
+        delay(650);                  //Minimum delay required to connect with ThingESP(250 milli seconds)
+        thing.Handle();               // Handles the connection with the hekp of ESP32
+      }
+    }
     Serial.println("");
   }
 
@@ -186,15 +187,6 @@ void loop()
   Serial.print(per);
   Serial.print("% FILLED");
   Serial.println("");
-
-  // THRESHOLD ALERT ON WHATSAPP  wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-/*  
-  if(height > 20)
-  {
-    
-  }*/
-  thing.Handle();               //////////////////////////////
-  
   
   Serial.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 

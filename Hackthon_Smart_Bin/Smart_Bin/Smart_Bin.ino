@@ -77,7 +77,7 @@ void loop()
   float humidity;      // Variable to store Humidity
   int status = 0;
   int per = 0;     // Displaying fill level percent
-  int i = 0;          // Used in while loop for sending alert
+  int i = 0;          // Used in for loop for sending alert
 
   temperature = dht.readTemperature();    //read temperature
   humidity = dht.readHumidity();          //read Humidity
@@ -93,21 +93,31 @@ void loop()
   //CONDITION FOR SENDING HIGH TEMPREATURE ALERT
   if(temperature >= 25)
   {
-      for(i=0; i<5; i++)
-      {
-        thing.sendMsg("+919773680338", "temperature is greater than 25 degree") ;
-        delay(500);            //Minimum delay required to connect with ThingESP(500 milli seconds)
-        thing.Handle();        // Handles the connection with the hekp of ESP32
-
-      }
+    for(i=0; i<5; i++)
+    {
+      thing.sendMsg("+919773680338", "temperature is greater than 25 degree") ;
+      delay(500);            //Minimum delay required to connect with ThingESP(500 milli seconds)
+      thing.Handle();        // Handles the connection with the help of ESP32
     }
-
+  }
 
   // PRINTING HUMIDITY
   Serial.print("HUMIDITY: ");
   Serial.print(humidity);
   Serial.println("");
   Serial.println("");
+
+  //CONDITION FOR SENDING HIGH HUMIDITY ALERT
+  if(humidity >= 70)
+  {
+    for(i=0; i<5; i++)
+    {
+      Serial.println();
+      thing.sendMsg("+919773680338", "Humidity is greater than 70 RH") ;
+      delay(500);            //Minimum delay required to connect with ThingESP(500 milli seconds)
+      thing.Handle();        // Handles the connection with the help of ESP32
+    }
+  }
 
 
   // ULTRASONIC
@@ -176,14 +186,14 @@ void loop()
       {
         thing.sendMsg("+919773680338", "Dustbin Fill Level Is Greather Than 66%") ;
         delay(650);                  //Minimum delay required to connect with ThingESP(250 milli seconds)
-        thing.Handle();               // Handles the connection with the hekp of ESP32
+        thing.Handle();               // Handles the connection with the help of ESP32
       }
     }
     Serial.println("");
   }
 
   // Percentage filled
-  per = (height * 0.034) * 100;                    // 1/30 = 0.025        30cm is the height of dustbin
+  per = (height * 0.034) * 100;                    // 1/30 = 0.034        30cm is the height of dustbin   
   Serial.print(per);
   Serial.print("% FILLED");
   Serial.println("");
